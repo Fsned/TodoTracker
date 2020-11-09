@@ -16,6 +16,10 @@ def addTaskToDictionary(date, task):
     a = 1
 
 
+def removeTaskFromDictionary(date, task):
+    # This function removes a task from the dictionary
+    a = 1
+
 
 currentDate = datetime.datetime.now()
 
