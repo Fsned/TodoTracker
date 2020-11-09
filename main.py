@@ -57,6 +57,8 @@ def changePage(date, deltaDays):
 
 previousDateButton = Button(window, text='<', command=lambda : changePage(currentDate, -1))
 nextDateButton = Button(window, text='>', command=lambda : changePage(currentDate, 1))
+addTaskButton = Button(window, text='Add', command=lambda : addTaskToDictionary(), width = 6)
+addTaskButton.place(x = 274, y = 75)
 
 previousDateButton.place(x = 80, y = 10)
 nextDateButton.place(x = 280, y = 10)
@@ -67,7 +69,7 @@ createTaskLabel = Label(window, text='Create new task', font = 'arial 13')
 createTaskLabel.place(x=10, y=50)
 
 newTaskHeadline = Entry(window, width= 25, justify=LEFT)
-newTaskDescription = Entry(window, width = 32)
+newTaskDescription = Entry(window, width = 37)
 
 newTaskHeadlineLabel = Label(window, text='Task name', justify=LEFT)
 newTaskHeadlineLabel.place(x=10, y = 80)
