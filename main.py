@@ -23,17 +23,24 @@ def removeTaskFromDictionary(date, task):
 
 currentDate = datetime.datetime.now()
 
-dateLabel = Label(window, text=str(currentDate.strftime('%d/%m - %Y')))
+dateLabel = Label(window, text=str(currentDate.strftime('%d/%m - %Y')), font='arial 15 bold')
+dateLabel.place(x=140, y=10)
 previousDateButton = Button(window, text='<')
 nextDateButton = Button(window, text='>')
 
-
-dateLabel.pack()
-
-pageButtons = {}
+previousDateButton.place(x = 80, y = 10)
+nextDateButton.place(x = 280, y = 10)
 
 
 
-Label(window, text='Create new task').pack()
+
+createTaskLabel = Label(window, text='Create new task', font = 'arial 13')
+createTaskLabel.place(x=10, y=50)
+
+newTaskHeadline = Entry(window, width= 32)
+newTaskDescription = Entry(window, width = 32)
+
+newTaskHeadline.place(x = 10, y = 80)
+newTaskDescription.place( x = 10, y = 105)
 
 window.mainloop()
