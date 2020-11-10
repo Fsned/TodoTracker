@@ -37,10 +37,28 @@ def createTaskEntriesFromJson(date):
             break
 
 
-def addTaskToDictionary(date, task):
+def addTaskToDictionary(date, taskName, taskDescription):
     # Add a new task to the dictionary
-    a = 1
+    #global currentDate
 
+    with open('./taskDictionary.json', 'r') as taskDictionaryFile:
+        taskDictionary = json.loads(taskDictionaryFile.read())
+
+    print("TaskDictionary: " + str(taskDictionary))
+    print("Date: " + str(date.strftime('%d/%m - %Y')))
+    print(taskDictionary[date.strftime('%d/%m - %Y')])
+
+    taskDictionary[date.strftime('%d/%m - %Y')][str(taskDictionary[date.strftime('%d/%m - %Y')].__len__())] = {
+        'taskName': taskName,
+        'taskDescription': taskDescription
+    }
+
+    #print(taskDictionary[date.strftime('%d/%m - %Y')])
+    
+    with open('./taskDictionary.json', 'w') as taskDictionaryFile:
+        json.dump(taskDictionary, taskDictionaryFile)
+
+    createTaskEntriesFromJson(currentDate)
 
 def removeTaskFromDictionary(date, task):
     # This function removes a task from the dictionary
@@ -55,9 +73,12 @@ def changePage(date, deltaDays):
     createTaskEntriesFromJson(currentDate)
 
 
+newTaskHeadlineVar = StringVar()
+newTaskDescriptionVar = StringVar()
+
 previousDateButton = Button(window, text='<', command=lambda : changePage(currentDate, -1))
 nextDateButton = Button(window, text='>', command=lambda : changePage(currentDate, 1))
-addTaskButton = Button(window, text='Add', command=lambda : addTaskToDictionary(), width = 6)
+addTaskButton = Button(window, text='Add', command=lambda : addTaskToDictionary(currentDate, newTaskHeadlineVar.get(), newTaskDescriptionVar.get()), width = 6)
 addTaskButton.place(x = 274, y = 75)
 
 previousDateButton.place(x = 80, y = 10)
@@ -68,8 +89,8 @@ createTaskEntriesFromJson(currentDate)
 createTaskLabel = Label(window, text='Create new task', font = 'arial 13')
 createTaskLabel.place(x=10, y=50)
 
-newTaskHeadline = Entry(window, width= 25, justify=LEFT)
-newTaskDescription = Entry(window, width = 37)
+newTaskHeadline = Entry(window, width= 25, justify=LEFT, textvariable=newTaskHeadlineVar)
+newTaskDescription = Entry(window, width = 37, textvariable=newTaskDescriptionVar)
 
 newTaskHeadlineLabel = Label(window, text='Task name', justify=LEFT)
 newTaskHeadlineLabel.place(x=10, y = 80)
