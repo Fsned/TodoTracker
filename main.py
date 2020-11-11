@@ -4,95 +4,40 @@ import datetime
 
 window = Tk()
 window.geometry('365x600')
-#window.configure(bg='gray15')
 
 def renderTasksToUI(date, frame, taskState):
     # This function looks up the taskDictionary.json, 
-    # and creates a label in the UI for each entry
-    global taskLabels
-    global tasks
+    ## and creates a label in the UI for each entry
 
-    global taskCompleteButtons
-    global taskRemoveButtons
+    # Destroy all widgets in the current frame
+    for widget in frame.winfo_children():
+       widget.destroy()
 
-    for a in taskLabels:
-        taskLabels[a].destroy()
-    for a in tasks:
-        tasks[a].destroy()
-
-    for a in taskCompleteButtons:
-        taskCompleteButtons[a].destroy()
-        taskRemoveButtons[a].destroy()
 
     with open('./taskDictionary.json', 'r') as taskDictionaryFile:
         taskDictionary = json.loads(taskDictionaryFile.read())
-    
-    
-    if (taskDictionary.get(date, None)) == None or (taskDictionary.get(date, None)) == {}:
-        taskLabels['0'] = Label(window, text='No tasks, dance party!', font = 'arial 14 bold')
-        taskLabels['0'].place(x = 10, y = 150)
+
+    if taskDictionary.get(date, None) == None:
+        taskDictionary[date] = {}
+
+    elif taskDictionary.get(date, None).__len__() == 0:
+        for widget in frame.winfo_children():
+            widget.destroy()
 
     else:
-
-        TASK_START_AT_Y = 45
-        TASK_OFFSET_Y = 30
-
-        bulletChar = '\u2219'
-
-        doneTasks = 0
-        todoTasks = 0
-
-        todoFrame = Frame(window, height = 40, width = 365)
-        todoFrame.pack_propagate(1)
-        todoFrame.grid(row=2)
-
-        todoFrame.place(x = 10, y = 150)
+        if taskState == True:
+            doneLabel = Label(frame, text = 'Done tasks', font = 'arial 16 bold')
+            doneLabel.grid(row = 0, column = 0, columnspan = 7) 
         
-    
-        doneFrame = Frame(window, height = 40, width = 365)
-        doneFrame.pack_propagate(1)
-        doneFrame.grid(row=3)
-        doneFrame.place(x = 10, y = 300)
+        elif taskState == False:
+            todoLabel = Label(frame, text = 'ToDo', font = 'arial 16 bold')
+            todoLabel.grid(row = 0, column = 0, columnspan = 7)
 
-        doneLabel = Label(doneFrame, text = 'Done tasks', font = 'arial 16 bold')
-        doneLabel.pack(side=LEFT)
-
-        
         for enum, b in enumerate(taskDictionary[date]):
-            if taskDictionary[date][b]['Done'] == False:
-                print ("Making label!" + str(enum))
-                if enum == 1:
-                    toDoLabel = Label(todoFrame, text = 'To Do', font = 'arial 16 bold')
-                    toDoLabel.grid(row = 0, column = 0)
-
-            
-                taskLabels[b] = Label(todoFrame, text=bulletChar, font = 'arial 14 bold')
-                taskLabels[b].grid(row = enum, column = 0)
-
-                tasks[b] = Label(todoFrame, text=taskDictionary[date][b]['taskName'], font = 'arial 14', justify=LEFT, bg='red')
-                tasks[b].grid(row = enum, column = 2)
-
-                taskCompleteButtons[b] = Button(todoFrame, text='\u2713', font='arial 8', width = 1, command = lambda b=b: completeTask(date, b))
-                taskCompleteButtons[b].grid(row = enum, column = 3, sticky=E)
-
-                taskRemoveButtons[b] = Button(todoFrame, text='\u274C', font='arial 8', width = 1, command = lambda b=b: removeTaskFromDictionary(date, b))
-                taskRemoveButtons[b].grid(row = enum, column = 4, sticky=E)
-
-            #taskLabels[b] = Label(frame, text=bulletChar, font = 'arial 14 bold')
-            #taskLabels[b].place(x = 10, y = TASK_START_AT_Y + (TASK_OFFSET_Y*int(enum)))
-#
-            #tasks[b] = Label(frame, text=taskDictionary[date][b]['taskName'], font = 'arial 14')
-            #tasks[b].place(x = 30, y = TASK_START_AT_Y + (TASK_OFFSET_Y*int(enum)))
-#
-            #taskCompleteButtons[b] = Button(frame, text='\u2713', font='arial 8', width = 1, command = lambda b=b: completeTask(date, b))
-            #taskCompleteButtons[b].place(x=290, y = TASK_START_AT_Y + (TASK_OFFSET_Y*int(enum)))
-#
-            #taskRemoveButtons[b] = Button(frame, text='\u274C', font='arial 8', width = 1, command = lambda b=b: removeTaskFromDictionary(date, b))
-            #taskRemoveButtons[b].place(x=325, y = TASK_START_AT_Y + (TASK_OFFSET_Y*int(enum)))
-
-
-
-
+            if taskDictionary[date][b].get('Done', None) == taskState:
+                Label(frame, text='\u2219' + taskDictionary[date][b]['taskName'], font = 'arial 14', justify=LEFT).grid(row = enum+1, column = 0, columnspan = 5, sticky=N+S+E+W)
+                Button(frame, text='\u2713', font='arial 8', width = 1, command = lambda b=b: completeTask(date, b)).grid(row = enum+1, column = 6, sticky=E)
+                Button(frame, text='\u274C', font='arial 8', width = 1, command = lambda b=b: removeTaskFromDictionary(date, b)).grid(row = enum+1, column = 7, sticky=E)
 
 def addTaskToDictionary(date, taskName, taskDescription):
     if newTaskHeadlineVar.get() == '':
@@ -118,9 +63,6 @@ def addTaskToDictionary(date, taskName, taskDescription):
 
     renderTasksToUI(currentDate.strftime('%d/%m - %Y'), doneFrame, True)
     renderTasksToUI(currentDate.strftime('%d/%m - %Y'), todoFrame, False)
-
-
-
 
 
 
@@ -150,10 +92,30 @@ def completeTask(date, task):
 
     with open('./taskDictionary.json', 'w') as taskDictionaryFile:
         json.dump(taskDictionary, taskDictionaryFile)
+    
+
+    renderTasksToUI(currentDate.strftime('%d/%m - %Y'), todoFrame, False)
+    renderTasksToUI(currentDate.strftime('%d/%m - %Y'), doneFrame, True)
+
 
 
 def changePage(deltaDays):
     global currentDate
+
+    if deltaDays == "startup":
+        currentDate = datetime.datetime.now()
+        
+        with open('./taskDictionary.json', 'r') as taskDictionaryFile:
+            taskDictionary = json.loads(taskDictionaryFile.read())
+
+        
+        if taskDictionary.get(currentDate.strftime('%d/%m - %Y'), None) == None:
+            taskDictionary[currentDate.strftime('%d/%m - %Y')] = {}
+
+        with open('./taskDictionary.json', 'w') as taskDictionaryFile:
+            json.dump(taskDictionary, taskDictionaryFile)
+
+        return
 
     currentDate += datetime.timedelta(days=deltaDays)
     dateLabel.configure(text=str(currentDate.strftime('%d/%m - %Y')))
@@ -161,12 +123,7 @@ def changePage(deltaDays):
     renderTasksToUI(currentDate.strftime('%d/%m - %Y'), todoFrame, False)
 
 
-currentDate = datetime.datetime.now()
-
-taskLabels = {}
-tasks = {}
-taskCompleteButtons = {}
-taskRemoveButtons = {}
+changePage("startup")
 
 newTaskHeadlineVar = StringVar()
 newTaskDescriptionVar = StringVar()
@@ -175,6 +132,7 @@ newTaskDescriptionVar = StringVar()
 #   HEADER FRAME
 # used for the current date and next/previous date buttons
 
+    
 headerFrame = Frame(window, width = 365, height = 20)
 headerFrame.pack_propagate(1)
 headerFrame.grid(row = 0)
@@ -190,7 +148,6 @@ nextDateButton.pack(side=LEFT)
 #   Headline FRAME
 # used for a single headline
 headlineFrame = Frame(window, width=365, height = 20)
-#headlineFrame.pack_propagate(1)
 headlineFrame.grid(row = 1)
 
 createTaskLabel = Label(headlineFrame, text='Create new task', font = 'arial 13', width=15)
@@ -218,22 +175,22 @@ addTaskButton = Button(inputFrame, text='Add', command=lambda : addTaskToDiction
 addTaskButton.grid(row = 1, column = 4, rowspan = 1, sticky = W+E+N+S)
 
 ################################################################################################################
-#   Input FRAME
+#   todo FRAME
 # used for all inputs and related labels
-todoFrame = Frame(window, width = 365, height = 20, bg = 'yellow')
+todoFrame = Frame(window, width = 365, height = 20)
+todoFrame.grid_propagate(1)
 todoFrame.grid()
 
-renderTasksToUI(currentDate.strftime('%d/%m - %Y'), doneFrame, False)
+
 
 ################################################################################################################
-#   Input FRAME
+#   done FRAME
 # used for all inputs and related labels
-doneFrame = Frame(window, width = 365, height = 20, bg = 'blue')
+doneFrame = Frame(window, width = 365, height = 20)
+doneFrame.grid_propagate(1 )
 doneFrame.grid()
 
+renderTasksToUI(currentDate.strftime('%d/%m - %Y'), todoFrame, False)
 renderTasksToUI(currentDate.strftime('%d/%m - %Y'), doneFrame, True)
-
-#renderTasksToUI(currentDate.strftime('%d/%m - %Y'))
-
 
 window.mainloop()
