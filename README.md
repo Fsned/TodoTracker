@@ -12,7 +12,7 @@
   A button to bring unfinished tasks from previous days, up to today would be nice.
   
 -) Edit existing tasks
-  To be able to edit existing tasks would be useful in case of typos etc.
+  To be able to correct or add to existing tasks, instead of re-creating
   
 -) Return to current date
   In case i swapped a lot of pages around, and forgot (or got far away) from the current date, i'd like to be able to click a 'return' button or similar to with one click go back to today.
@@ -22,5 +22,10 @@
   A) See a colored view (e.g. gray / white) if each day has unfinished tasks in them
   B) Click a day in the month to go to that day
   C) Browse between months
+  
+  
+  ----) MAJOR FEATURE: -------- Remake in PyQt5
+  PyQt5 seems like the shit regarding GUI in python
+ 
   
 
