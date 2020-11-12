@@ -4,6 +4,7 @@ import datetime
 
 window = Tk()
 window.geometry('360x600')
+window.iconphoto(False, PhotoImage(file='./icon.png'))
 
 def renderTasksToUI(date, frames):
     # Destroy all widgets in both frames

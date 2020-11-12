@@ -23,6 +23,12 @@
   B) Click a day in the month to go to that day
   C) Browse between months
   
+
+-) Change ToDo and 'Done'-frames to LabelFrames, and remove the headlines
+  if this is done, the frame.winfo_children() can be used to destroy in case no tasks exist in each window:
+
+  if frames[frame].winfo_children == []:
+    frames[frame].grid_forget()           <----- maybe?
   
   ----) MAJOR FEATURE: -------- Remake in PyQt5
   PyQt5 seems like the shit regarding GUI in python
