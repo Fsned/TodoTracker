@@ -42,7 +42,7 @@ def renderTasksToUI(date, frames):
                 frame = '0'
                 doneChar = '\u2713'
 
-            Label(frames[frame], text='\u2219' + taskDictionary[date][task]['taskName'], font = 'arial 14', justify=CENTER, wraplength = 280   ).grid(row = enum+1, column = 0, columnspan = 5, sticky=N+S+E+W)
+            Label(frames[frame], text='\u2023' + taskDictionary[date][task]['taskName'], font = 'arial 14', justify=CENTER, wraplength = 280   ).grid(row = enum+1, column = 0, columnspan = 5, sticky=N+S+E+W)
             Button(frames[frame], text=doneChar, font='arial 8', width = 1, command = lambda b=task: completeTask(date, b)).grid(row = enum+1, column = 6, sticky=E)
             Button(frames[frame], text='\u274C', font='arial 8', width = 1, command = lambda b=task: removeTaskFromDictionary(date, b)).grid(row = enum+1, column = 7, sticky=E)    
 
