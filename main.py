@@ -37,12 +37,14 @@ def renderTasksToUI(date, frames):
         for enum, task in enumerate(taskDictionary[date]):
             if taskDictionary[date][task]['Done'] == True:
                 frame = '1'
+                doneChar = '\u2191'
             else:
                 frame = '0'
+                doneChar = '\u2713'
 
-            Label(frames[frame], text='\u2219' + taskDictionary[date][task]['taskName'], font = 'arial 14', justify=LEFT).grid(row = enum+1, column = 0, columnspan = 5, sticky=N+S+E+W)
-            Button(frames[frame], text='\u2713', font='arial 8', width = 1, command = lambda b=task: completeTask(date, b)).grid(row = enum+1, column = 6, sticky=E)
-            Button(frames[frame], text='\u274C', font='arial 8', width = 1, command = lambda b=task: removeTaskFromDictionary(date, b)).grid(row = enum+1, column = 7, sticky=E)
+            Label(frames[frame], text='\u2219' + taskDictionary[date][task]['taskName'], font = 'arial 14', justify=CENTER, wraplength = 280   ).grid(row = enum+1, column = 0, columnspan = 5, sticky=N+S+E+W)
+            Button(frames[frame], text=doneChar, font='arial 8', width = 1, command = lambda b=task: completeTask(date, b)).grid(row = enum+1, column = 6, sticky=E)
+            Button(frames[frame], text='\u274C', font='arial 8', width = 1, command = lambda b=task: removeTaskFromDictionary(date, b)).grid(row = enum+1, column = 7, sticky=E)    
 
 
 def addTaskToDictionary(date, taskName, taskDescription):
@@ -90,7 +92,7 @@ def completeTask(date, task):
     with open('./taskDictionary.json', 'r') as taskDictionaryFile:
         taskDictionary = json.loads(taskDictionaryFile.read())
 
-    taskDictionary[date][task]['Done'] = True
+    taskDictionary[date][task]['Done'] = not taskDictionary[date][task]['Done']
 
     with open('./taskDictionary.json', 'w') as taskDictionaryFile:
         json.dump(taskDictionary, taskDictionaryFile)
@@ -130,19 +132,18 @@ newTaskDescriptionVar = StringVar()
     
 headerFrame = Frame(window, width = 365, height = 20)
 headerFrame.pack_propagate(1)
-headerFrame.grid(row = 0)
+headerFrame.grid(row = 0, columnspan = 4)
 
-Button(headerFrame, text='<', command=lambda : changePage(-1)).pack(side=LEFT)#, bg = 'gray15', fg = 'snow', activebackground = 'gray15', activeforeground = 'snow')
+Button(headerFrame, text='<', command=lambda : changePage(-1)).grid(row = 0, column = 0)#, bg = 'gray15', fg = 'snow', activebackground = 'gray15', activeforeground = 'snow')
 dateLabel = Label(headerFrame, text=str(currentDate.strftime('%d/%m - %Y')), font='arial 15 bold')
-dateLabel.pack(side=LEFT)
-Button(headerFrame, text='>', command=lambda : changePage(1)).pack(side=LEFT)
-
+dateLabel.grid(row = 0, column = 1)
+Button(headerFrame, text='>', command=lambda : changePage(1)).grid(row = 0, column = 2)
 
 ################################################################################################################
 #   Input & etc FRAME
 # used for a single headline
 inputFrame = LabelFrame(window, width = 365, height = 20, text = 'Create new task')
-inputFrame.grid(row = 1)
+inputFrame.grid(row = 1, columnspan = 8)
 
 Label(inputFrame, text='Task name', justify=LEFT).grid(row = 0, sticky = W)
 Label(inputFrame, text='Description').grid(row = 1, sticky = W)
