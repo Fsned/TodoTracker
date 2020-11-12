@@ -4,7 +4,7 @@
 
 -) 'ToDo' / 'Done tasks' -labels show up when there's just 1 task in either, and e.g. 'Done tasks' should only show if >=1 done tasks exist in current date
 
--) 
+-) Add empty frame or label or something to the top of the Done and To Do-frames, to keep the width at max, so button always appear at far right
 
 
 -- FEATURES --------
