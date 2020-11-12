@@ -23,6 +23,8 @@
   B) Click a day in the month to go to that day
   C) Browse between months
   
+-) Popup when clicking a task
+  When clicking a task, a window of same size as mainwindow should pop up to the right (sticky to original window) showing the task headline in a headline, and the task description. Similar to when opening a mail in Outlook. In here, could be space for more fields, e.g. 'Deadline', 'Responsible', 'Links', and more.
 
 -) Change ToDo and 'Done'-frames to LabelFrames, and remove the headlines
   if this is done, the frame.winfo_children() can be used to destroy in case no tasks exist in each window:
