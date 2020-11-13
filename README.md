@@ -8,6 +8,9 @@
 
 
 -- FEATURES --------
+-) add scroller to the window
+Tasks tend to pile up and grow out the bottom of the window :( 
+
 -) Fetch unfinished tasks <Button>
   A button to bring unfinished tasks from previous days, up to today would be nice.
   
