@@ -3,9 +3,19 @@ import json
 import datetime
 
 window = Tk()
-window.geometry('360x600')
+window.geometry('360x1060')
 window.iconphoto(False, PhotoImage(file='./icon.png'))
 window.title('To-Do Tracker')
+
+def readDictionary():
+    with open('./taskDictionary.json', 'r') as taskDictionaryFile:
+        taskDictionary = json.loads(taskDictionaryFile.read())
+    return taskDictionary
+    
+def writeDictionary(dictionary):
+    with open('./taskDictionary.json', 'w') as taskDictionaryFile:
+        json.dump(dictionary, taskDictionaryFile)
+    return
 
 
 def renderTasksToUI(date, frames):
@@ -17,8 +27,7 @@ def renderTasksToUI(date, frames):
     Label(frames['0'], text = 'ToDo', font = 'arial 16 bold').grid(row = 0, column = 0, columnspan = 7)
     Label(frames['1'], text = 'Done tasks', font = 'arial 16 bold').grid(row = 0, column = 0, columnspan = 7)
 
-    with open('./taskDictionary.json', 'r') as taskDictionaryFile:
-        taskDictionary = json.loads(taskDictionaryFile.read())
+    taskDictionary = readDictionary()
 
     if taskDictionary.get(date, None) == None:
         taskDictionary[date] = {}
@@ -45,21 +54,15 @@ def renderTasksToUI(date, frames):
                 frame = '0'
                 doneChar = '\u2713'
 
-            #Checkbutton(frames[frame], command = lambda b=task: toggleTask(date, b)).grid(row = enum + 1, column = 0, sticky = W)
-            Label(frames[frame], text = taskDictionary[date][task]['taskName'], font = 'arial 10', justify=CENTER, wraplength = 280   ).grid(row = enum+1, column = 1, columnspan = 4, sticky=W)
+            Label(frames[frame], text = taskDictionary[date][task]['taskName'], font = 'arial 10', justify=LEFT, wraplength = 280   ).grid(row = enum+1, column = 1, columnspan = 4, sticky=W)
             Button(frames[frame], text=doneChar, font='arial 8', width = 1, command = lambda b=task: completeTask(date, b)).grid(row = enum+1, column = 6, sticky=E)
             Button(frames[frame], text='\u274C', font='arial 8', width = 1, command = lambda b=task: removeTaskFromDictionary(date, b)).grid(row = enum+1, column = 7, sticky=E)    
 
 
 def toggleTask(date, task):
-    with open('./taskDictionary.json', 'r') as taskDictionaryFile:
-        taskDictionary = json.loads(taskDictionaryFile.read())
-
+    taskDictionary = readDictionary()
     taskDictionary[date][task]['Done'] = not taskDictionary[date][task]['Done']
-
-    with open('./taskDictionary.json', 'w') as taskDictionaryFile:
-        json.dump(taskDictionary, taskDictionaryFile)
-    
+    writeDictionary(taskDictionary)
     renderTasksToUI(currentDate.strftime('%d/%m - %Y'), taskFrames)
 
 
@@ -68,9 +71,7 @@ def addTaskToDictionary(date, taskName):
         return
 
     newTaskHeadlineVar.set('')
-        
-    with open('./taskDictionary.json', 'r') as taskDictionaryFile:
-        taskDictionary = json.loads(taskDictionaryFile.read())
+    taskDictionary = readDictionary()
 
     if taskDictionary.get(date, None) == None:
         taskDictionary[date] = {}
@@ -81,51 +82,34 @@ def addTaskToDictionary(date, taskName):
         'Done': False
     }
     
-    with open('./taskDictionary.json', 'w') as taskDictionaryFile:
-        json.dump(taskDictionary, taskDictionaryFile)
-
+    writeDictionary(taskDictionary)
     renderTasksToUI(currentDate.strftime('%d/%m - %Y'), taskFrames)
 
 
 def removeTaskFromDictionary(date, task):
-    
-    with open('./taskDictionary.json', 'r') as taskDictionaryFile:
-        taskDictionary = json.loads(taskDictionaryFile.read())
-
+    taskDictionary = readDictionary()
     taskDictionary[date].pop(str(task))
-
+    
     if taskDictionary[date].__len__() == 0:
         del taskDictionary[date]
 
-    with open('./taskDictionary.json', 'w') as taskDictionaryFile:
-        json.dump(taskDictionary, taskDictionaryFile)
-
+    writeDictionary(taskDictionary)
     renderTasksToUI(currentDate.strftime('%d/%m - %Y'), taskFrames)
 
 
 def completeTask(date, task):
-    with open('./taskDictionary.json', 'r') as taskDictionaryFile:
-        taskDictionary = json.loads(taskDictionaryFile.read())
-
+    taskDictionary = readDictionary()
     taskDictionary[date][task]['Done'] = not taskDictionary[date][task]['Done']
-
-    with open('./taskDictionary.json', 'w') as taskDictionaryFile:
-        json.dump(taskDictionary, taskDictionaryFile)
-    
+    writeDictionary(taskDictionary)
     renderTasksToUI(currentDate.strftime('%d/%m - %Y'), taskFrames)
 
 
 def moveTasksToToday():
-    global currentDate
     today = datetime.datetime.now()
-    with open('./taskDictionary.json', 'r') as taskDictionaryFile:
-        taskDictionary = json.loads(taskDictionaryFile.read())
+    taskDictionary = readDictionary()
 
     for a in taskDictionary:
         b = a.split()
-        #day = b[0][0:2]
-        #month = b[0][-2:]
-        #year = b[2][0:4]
 
         DicDate = datetime.date(year = int(b[2][0:4]), month = int(b[0][-2:]), day = int(b[0][0:2]))
         currDate = datetime.date(year = int(today.strftime('%Y')), month = int(today.strftime('%m')), day = int(today.strftime('%d')))
@@ -141,15 +125,12 @@ def moveTasksToToday():
 
                     taskDictionary[a][b]['Done'] = True
 
-    with open('./taskDictionary.json', 'w') as taskDictionaryFile:
-        json.dump(taskDictionary, taskDictionaryFile)
-
-    renderTasksToUI(currentDate.strftime('%d/%m - %Y'), taskFrames)
+    writeDictionary(taskDictionary)
+    changePage(0)
+    renderTasksToUI(today.strftime('%d/%m - %Y'), taskFrames)
 
                     
         
-
-
 
 def changePage(deltaDays):
     global currentDate
@@ -157,27 +138,23 @@ def changePage(deltaDays):
     if deltaDays == "startup":
         currentDate = datetime.datetime.now()
         
-        with open('./taskDictionary.json', 'r') as taskDictionaryFile:
-            taskDictionary = json.loads(taskDictionaryFile.read())
+        taskDictionary = readDictionary()
 
         if taskDictionary.get(currentDate.strftime('%d/%m - %Y'), None) == None:
             taskDictionary[currentDate.strftime('%d/%m - %Y')] = {}
 
-        with open('./taskDictionary.json', 'w') as taskDictionaryFile:
-            json.dump(taskDictionary, taskDictionaryFile)
+        writeDictionary(taskDictionary)
 
         return
 
     if deltaDays == 0:
         currentDate = datetime.datetime.now()
-        with open('./taskDictionary.json', 'r') as taskDictionaryFile:
-            taskDictionary = json.loads(taskDictionaryFile.read())
+        taskDictionary = readDictionary()
 
         if taskDictionary.get(currentDate.strftime('%d/%m - %Y'), None) == None:
             taskDictionary[currentDate.strftime('%d/%m - %Y')] = {}
 
-        with open('./taskDictionary.json', 'w') as taskDictionaryFile:
-            json.dump(taskDictionary, taskDictionaryFile)
+        writeDictionary(taskDictionary)
         
     currentDate += datetime.timedelta(days=deltaDays)
 
@@ -230,16 +207,15 @@ nextDayButton.grid(row = 1, rowspan = 3, column = 7)
 inputFrame = LabelFrame(window, width = 365, height = 20, text = 'Create new task')
 inputFrame.grid(row = 9, columnspan = 8)
 
-taskFrames = {}
-
 Label(inputFrame, text='Name', justify=LEFT).grid(row = 0, sticky = W)
 Entry(inputFrame, textvariable=newTaskHeadlineVar).grid(row = 0, column = 1, columnspan=2)
 Button(inputFrame, text='Add', command=lambda : addTaskToDictionary(currentDate.strftime('%d/%m - %Y'), newTaskHeadlineVar.get()), width = 3).grid(row = 0, column = 4, sticky = W)
-#Button(inputFrame, text='\u27F3', command = lambda : moveTasksToToday()).grid(row = 0, column = 5, sticky = E)
-
+Button(inputFrame, text='\u27F3', command = lambda : moveTasksToToday()).grid(row = 0, column = 5, sticky = E)
 
 ######################################################
 #   ['0'] == todoFrame      #      ['1'] == doneFrame
+
+taskFrames = {}
 for a in range(2):
     taskFrames[str(a)] = Frame(window, width = 365, height = 20)
     taskFrames[str(a)].grid_propagate(1)
@@ -250,7 +226,4 @@ for a in range(2):
     spaceFrame.grid()
 
 renderTasksToUI(currentDate.strftime('%d/%m - %Y'), taskFrames)
-
-Button(inputFrame, text='\u27F3', command = moveTasksToToday()).grid(row = 0, column = 5, sticky = E)
-
 window.mainloop()
