@@ -18,12 +18,14 @@ def writeDictionary(dictionary):
     return
 
 
-def renderTasksToUI(date, frames):
-    # Destroy all widgets in both frames
+def destroyFrameChildren(frames):
     for frame in frames:
         for widget in frames[frame].winfo_children():
             widget.destroy()
 
+def renderTasksToUI(date, frames):
+
+    destroyFrameChildren(frames)
     Label(frames['0'], text = 'ToDo', font = 'arial 16 bold').grid(row = 0, column = 0, columnspan = 7)
     Label(frames['1'], text = 'Done tasks', font = 'arial 16 bold').grid(row = 0, column = 0, columnspan = 7)
 
@@ -31,17 +33,11 @@ def renderTasksToUI(date, frames):
 
     if taskDictionary.get(date, None) == None:
         taskDictionary[date] = {}
-        
-        for frame in frames:
-            for widget in frames[frame].winfo_children():
-                widget.destroy()
-        
+        destroyFrameChildren(frames)
         Label(frames['0'], text = 'No tasks, dance party!', font = 'arial 16 bold').grid(row = 2)
 
     elif taskDictionary.get(date, None).__len__() == 0:
-        for frame in frames:
-            for widget in frames[frame].winfo_children():
-                widget.destroy()
+        destroyFrameChildren(frames)
         
         Label(frames['0'], text = 'No tasks, dance party!', font = 'arial 16 bold').grid(row = 2)
     
@@ -89,7 +85,7 @@ def addTaskToDictionary(date, taskName):
 def removeTaskFromDictionary(date, task):
     taskDictionary = readDictionary()
     taskDictionary[date].pop(str(task))
-    
+
     if taskDictionary[date].__len__() == 0:
         del taskDictionary[date]
 
@@ -130,24 +126,10 @@ def moveTasksToToday():
     renderTasksToUI(today.strftime('%d/%m - %Y'), taskFrames)
 
                     
-        
-
 def changePage(deltaDays):
     global currentDate
 
-    if deltaDays == "startup":
-        currentDate = datetime.datetime.now()
-        
-        taskDictionary = readDictionary()
-
-        if taskDictionary.get(currentDate.strftime('%d/%m - %Y'), None) == None:
-            taskDictionary[currentDate.strftime('%d/%m - %Y')] = {}
-
-        writeDictionary(taskDictionary)
-
-        return
-
-    if deltaDays == 0:
+    if deltaDays == "startup" or deltaDays == 0:
         currentDate = datetime.datetime.now()
         taskDictionary = readDictionary()
 
@@ -155,18 +137,18 @@ def changePage(deltaDays):
             taskDictionary[currentDate.strftime('%d/%m - %Y')] = {}
 
         writeDictionary(taskDictionary)
+        if deltaDays != 0:
+            return
         
     currentDate += datetime.timedelta(days=deltaDays)
-
     dayLabel.configure(text = str(currentDate.strftime('%d')))
     monthLabel.configure(text = str(currentDate.strftime('%b')))
     weekLabel.configure(text = str('W' + currentDate.strftime('%W')))
     yearLabel.configure(text = str(currentDate.strftime('%Y')))
-
     renderTasksToUI(currentDate.strftime('%d/%m - %Y'), taskFrames)
 
-changePage("startup")
 
+changePage("startup")
 newTaskHeadlineVar = StringVar()
 
 ################################################################################################################
