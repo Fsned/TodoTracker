@@ -190,8 +190,12 @@ inputFrame = LabelFrame(window, width = 365, height = 20, text = 'Create new tas
 inputFrame.grid(row = 9, columnspan = 8)
 
 Label(inputFrame, text='Name', justify=LEFT).grid(row = 0, sticky = W)
-Entry(inputFrame, textvariable=newTaskHeadlineVar).grid(row = 0, column = 1, columnspan=2)
-Button(inputFrame, text='Add', command=lambda : addTaskToDictionary(currentDate.strftime('%d/%m - %Y'), newTaskHeadlineVar.get()), width = 3).grid(row = 0, column = 4, sticky = W)
+newTaskEntry = Entry(inputFrame, textvariable=newTaskHeadlineVar)
+newTaskEntry.grid(row = 0, column = 1, columnspan=2)
+newTaskEntry.bind("<Return>", lambda e: addTaskToDictionary(currentDate.strftime('%d/%m - %Y'), newTaskHeadlineVar.get()))
+
+addButton = Button(inputFrame, text='Add', command=lambda : addTaskToDictionary(currentDate.strftime('%d/%m - %Y'), newTaskHeadlineVar.get()), width = 3)
+addButton.grid(row = 0, column = 4, sticky = W)
 Button(inputFrame, text='\u27F3', command = lambda : moveTasksToToday()).grid(row = 0, column = 5, sticky = E)
 
 ######################################################
