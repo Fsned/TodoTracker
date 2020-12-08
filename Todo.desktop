@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Name=Todo
+Path=/home/fsn/Documents/Projects/TodoTracker/
+Exec=/usr/bin/python3 /home/fsn/Documents/Projects/TodoTracker/main.py
+Icon=icon2.png
+Categories=IDE;Development
